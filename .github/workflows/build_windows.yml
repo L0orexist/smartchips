@@ -1,10 +1,10 @@
 name: Build Windows Game
 on:
-  workflow_dispatch: # Ti permette di avviare la build con un click manuale
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest # Usiamo un PC Windows di Microsoft
+    runs-on: windows-latest
 
     steps:
       - name: Checkout del codice
@@ -25,12 +25,10 @@ jobs:
         run: flutter build windows --release
 
       - name: Comprimi i file (Zip)
-        run: |
-          cd build/windows/x64/runner/Release
-          Compress-Archive -Path * -DestinationPath ../../../../SmartChips_Windows.zip
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath SmartChips_Windows.zip
 
       - name: Carica il risultato
         uses: actions/upload-artifact@v4
         with:
           name: Gioco-Windows
-          path: build/windows/x64/runner/SmartChips_Windows.zip
+          path: SmartChips_Windows.zip
