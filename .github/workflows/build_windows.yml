@@ -1,0 +1,36 @@
+name: Build Windows Game
+on:
+  workflow_dispatch: # Ti permette di avviare la build con un click manuale
+
+jobs:
+  build:
+    runs-on: windows-latest # Usiamo un PC Windows di Microsoft
+
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Installa Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Abilita Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Installa dipendenze
+        run: flutter pub get
+
+      - name: Costruisci EXE
+        run: flutter build windows --release
+
+      - name: Comprimi i file (Zip)
+        run: |
+          cd build/windows/x64/runner/Release
+          Compress-Archive -Path * -DestinationPath ../../../../SmartChips_Windows.zip
+
+      - name: Carica il risultato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gioco-Windows
+          path: build/windows/x64/runner/SmartChips_Windows.zip
